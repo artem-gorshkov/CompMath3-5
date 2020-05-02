@@ -6,7 +6,7 @@ import org.mariuszgromada.math.mxparser.Expression;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class CompMethod {
     private Expression exp;
@@ -34,35 +34,32 @@ public class CompMethod {
         var list = new ArrayList<Pair<Double, Double>>();
         double step = (b - a) / k;
         for (double i = a; i < b; i += step) {
-            if (f(i) * f(i + step) < 0)
+            double first = f(i);
+            double second = f(i + step);
+            if (f(i) * f(i + step) < 0 || f(i) == 0)
                 list.add(new Pair<>(i, i + step));
+        }
+        if (f(b) == 0) {
+            list.add(new Pair<>(b - step, b));
         }
         return list;
     }
 
     private Pair<Double, Integer> oneRoot(double a, double b, double e, boolean isBisection) {
-        Function<Pair<Double, Double>, Double> calcNewC;
+        BiFunction<Double, Double, Double> calcNewC;
         if (isBisection)
-            calcNewC = (p) -> {
-                var A = p.getKey();
-                var B = p.getValue();
-            return (A + B) / 2;
-            };
+            calcNewC = (A, B) -> (A + B) / 2;
         else
-            calcNewC = (p) -> {
-            var A = p.getKey();
-            var B = p.getValue();
-            return A - f(A) * (B - A) / (f(B) - f(A));
-            };
-        double c = calcNewC.apply(new Pair<>(a, b));
+            calcNewC = (A, B) -> A - f(A) * (B - A) / (f(B) - f(A));
+        double c = calcNewC.apply(a, b);
         int n = 1;
         while (Math.abs(f(c)) >= e && b - a >= e) {
-            if (f(a) * f(c) < 0)
+            if (f(a) * f(c) <= 0)
                 b = c;
             else
                 a = c;
             n++;
-            c = calcNewC.apply(new Pair<>(a, b));
+            c = calcNewC.apply(a, b);
         }
         return new Pair<>(c, n);
     }

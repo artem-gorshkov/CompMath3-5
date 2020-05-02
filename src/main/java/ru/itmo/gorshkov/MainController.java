@@ -15,6 +15,9 @@ import javafx.util.Pair;
 import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class MainController {
 
     public TextArea equation_1;
@@ -35,7 +38,8 @@ public class MainController {
         table_root.setCellValueFactory(new PropertyValueFactory<>("key"));
         table_iterations.setCellValueFactory(new PropertyValueFactory<>("value"));
         table.setPlaceholder(new Label(""));
-
+        table_root.maxWidthProperty().bind(table.widthProperty().multiply(.67));
+        table_root.minWidthProperty().bind(table_root.maxWidthProperty());
     }
 
     public void solve_1() {
@@ -51,8 +55,9 @@ public class MainController {
                     parseDouble(e_1),
                     parseDouble(k_1),
                     isBisection);
+            var root = answer.stream().map(Pair::getKey).collect(Collectors.toList());
             table.setItems(FXCollections.observableList(answer));
-            drawPlot(parseDouble(a_1), parseDouble(b_1), equation);
+            drawPlotWithRoots(parseDouble(a_1), parseDouble(b_1), equation, root);
         } catch (Exception e) {
             error_1.setVisible(true);
             equation_1.clear();
@@ -77,12 +82,21 @@ public class MainController {
         k_1.setText("50");
     }
 
-    public void drawPlot(double a, double b, String equation) {
-        NumberAxis x = new NumberAxis();
-        NumberAxis y = new NumberAxis();
-        var chart = new LineChart<>(x, y);
+    private void drawPlotWithRoots(double a, double b, String equation, List<Double> roots) {
         var exp = new Expression(equation);
         exp.addArguments(new Argument("x", 0));
+        var chart = drawPlot(a, b, exp);
+        drawRoots(roots, chart, exp);
+        chartBox.getChildren().clear();
+        chartBox.getChildren().add(chart);
+    }
+
+    private LineChart<Number, Number> drawPlot(double a, double b, Expression exp) {
+        NumberAxis x = new NumberAxis();
+        x.setLabel("x");
+        NumberAxis y = new NumberAxis();
+        y.setLabel("y");
+        var chart = new LineChart<>(x, y);
         ObservableList<XYChart.Data<Number, Number>> data = FXCollections.observableArrayList();
         for (double i = a; i <= b; i += (b - a) / 100) {
             exp.setArgumentValue("x", i);
@@ -90,15 +104,29 @@ public class MainController {
         }
         var series = new XYChart.Series<>(data);
         chart.getData().add(series);
-        for (XYChart.Data<Number, Number> dataNode : series.getData()) {
+        for (var dataNode : series.getData()) {
             StackPane stackPane = (StackPane) dataNode.getNode();
             stackPane.setVisible(false);
         }
-        AnchorPane.setBottomAnchor(chart,0d);
-        AnchorPane.setLeftAnchor(chart,0d);
-        AnchorPane.setRightAnchor(chart,0d);
-        AnchorPane.setTopAnchor(chart,0d);
-        chartBox.getChildren().clear();
-        chartBox.getChildren().add(chart);
+        AnchorPane.setBottomAnchor(chart, 0d);
+        AnchorPane.setLeftAnchor(chart, 0d);
+        AnchorPane.setRightAnchor(chart, 0d);
+        AnchorPane.setTopAnchor(chart, 0d);
+        chart.setLegendVisible(false);
+        chart.getData().forEach(s -> s.getData().forEach(d -> {
+            var node = d.getNode();
+            Tooltip tooltip = new Tooltip('(' + d.getXValue().toString() + ';' + d.getYValue().toString() + ')');
+            Tooltip.install(node, tooltip);
+        }));
+        return chart;
+    }
+
+    private void drawRoots(List<Double> roots, LineChart<Number, Number> chart, Expression exp) {
+        roots.forEach(root -> {
+            exp.setArgumentValue("x", root);
+            var series = new XYChart.Series<Number, Number>();
+            series.getData().add(new XYChart.Data<>(root, exp.calculate()));
+            chart.getData().add(series);
+        });
     }
 }
