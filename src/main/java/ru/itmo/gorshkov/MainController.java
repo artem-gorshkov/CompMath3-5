@@ -28,10 +28,19 @@ public class MainController {
     public ToggleGroup method_1;
     public Text error_1;
 
+    public TextArea equation_2_1;
+    public TextArea equation_2_2;
+    public TextField a_2;
+    public TextField b_2;
+    public TextField e_2;
+    public TextField k_2;
+    public Text error_2;
+
     public TableView<Pair<Double, Integer>> table;
     public TableColumn<Pair<Double, Integer>, Double> table_root;
     public TableColumn<Pair<Double, Integer>, Integer> table_iterations;
     public AnchorPane chartBox;
+
 
     @FXML
     private void initialize() {
@@ -48,7 +57,7 @@ public class MainController {
             String equation = Parser.parseEquation(equation_1.getText());
             RadioButton selection = (RadioButton) method_1.getSelectedToggle();
             boolean isBisection = selection.getText().equals("Метод деления пополам");
-            var method = new CompMethod(equation);
+            var method = new NonLinearCompMethod(equation);
             var answer = method.solve(
                     parseDouble(a_1),
                     parseDouble(b_1),
@@ -69,8 +78,8 @@ public class MainController {
         }
     }
 
-    private double parseDouble(TextField text) {
-        return Double.parseDouble(text.getText());
+    public void solve_2() {
+
     }
 
     @FXML
@@ -80,6 +89,20 @@ public class MainController {
         b_1.setText("10");
         e_1.setText("0.0001");
         k_1.setText("50");
+    }
+
+    @FXML
+    public void test1_2() {
+        equation_1.setText("ln(x-5)*sin(x)+2=0");
+        a_1.setText("15");
+        b_1.setText("17");
+        e_1.setText("10^(-4)");
+        k_1.setText("1");
+    }
+
+    @FXML
+    public void test2() {
+
     }
 
     private void drawPlotWithRoots(double a, double b, String equation, List<Double> roots) {
@@ -92,15 +115,28 @@ public class MainController {
     }
 
     private LineChart<Number, Number> drawPlot(double a, double b, Expression exp) {
-        NumberAxis x = new NumberAxis();
-        x.setLabel("x");
+//        double step = (Math.ceil(b) - Math.floor(a)) / 25;
+//        NumberAxis x = new NumberAxis(Math.floor(a), Math.ceil(b), step);
+//        x.setAutoRanging(true);
         NumberAxis y = new NumberAxis();
-        y.setLabel("y");
+        NumberAxis x = new NumberAxis();
+        x.setForceZeroInRange(false);
         var chart = new LineChart<>(x, y);
+//        exp.setArgumentValue("x", a);
+//        if (!Double.isFinite(exp.calculate())) {
+//            var series = new XYChart.Series<Number, Number>();
+//            var dot = new XYChart.Data<Number, Number>(a, 0);
+//            series.getData().add(dot);
+//            chart.getData().add(series);
+//            StackPane stackPane = (StackPane) dot.getNode();
+//            stackPane.setVisible(false);
+//        }
         ObservableList<XYChart.Data<Number, Number>> data = FXCollections.observableArrayList();
         for (double i = a; i <= b; i += (b - a) / 100) {
             exp.setArgumentValue("x", i);
-            data.add(new XYChart.Data<>(i, exp.calculate()));
+            var result = exp.calculate();
+            if (Double.isFinite(result))
+                data.add(new XYChart.Data<>(i, result));
         }
         var series = new XYChart.Series<>(data);
         chart.getData().add(series);
@@ -113,11 +149,6 @@ public class MainController {
         AnchorPane.setRightAnchor(chart, 0d);
         AnchorPane.setTopAnchor(chart, 0d);
         chart.setLegendVisible(false);
-        chart.getData().forEach(s -> s.getData().forEach(d -> {
-            var node = d.getNode();
-            Tooltip tooltip = new Tooltip('(' + d.getXValue().toString() + ';' + d.getYValue().toString() + ')');
-            Tooltip.install(node, tooltip);
-        }));
         return chart;
     }
 
@@ -128,5 +159,9 @@ public class MainController {
             series.getData().add(new XYChart.Data<>(root, exp.calculate()));
             chart.getData().add(series);
         });
+    }
+
+    private double parseDouble(TextField text) {
+        return new Expression(text.getText()).calculate();
     }
 }

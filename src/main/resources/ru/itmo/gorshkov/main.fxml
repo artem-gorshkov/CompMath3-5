@@ -55,16 +55,21 @@
                                 </fx:define>
                                 <RadioButton mnemonicParsing="false" selected="true" text="Метод деления пополам">
                                     <toggleGroup>
-                                        <ToggleGroup fx:id="method_1" />
+                                        <ToggleGroup fx:id="method_1"/>
                                     </toggleGroup>
                                 </RadioButton>
-                                <RadioButton mnemonicParsing="false" text="Метод хорд" toggleGroup="$method_1" />
-                                <Button mnemonicParsing="false" onAction="#solve_1" prefHeight="24.0" prefWidth="236.0" text="Вычислить" textAlignment="CENTER" />
+                                <RadioButton mnemonicParsing="false" text="Метод хорд" toggleGroup="$method_1"/>
+                                <Button mnemonicParsing="false" onAction="#solve_1" prefHeight="24.0" prefWidth="236.0"
+                                        text="Вычислить" textAlignment="CENTER"/>
                                 <Button mnemonicParsing="false" onAction="#test1" prefHeight="24.0" prefWidth="236.0"
                                         text="Тест1" textAlignment="CENTER"/>
-                                <Text fx:id="error_1" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Ошибка ввода" textAlignment="CENTER" visible="false" wrappingWidth="219.7294921875">
+                                <Button mnemonicParsing="false" onAction="#test1_2" prefHeight="24.0" prefWidth="236.0"
+                                        text="Тест2" textAlignment="CENTER"/>
+                                <Text fx:id="error_1" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0"
+                                      text="Ошибка ввода" textAlignment="CENTER" visible="false"
+                                      wrappingWidth="219.7294921875">
                                     <font>
-                                        <Font size="18.0" />
+                                        <Font size="18.0"/>
                                     </font>
                                 </Text>
                             </children>
@@ -81,40 +86,52 @@
                                         <Font size="14.0"/>
                                     </font>
                                 </Text>
-                                <TextArea prefHeight="42.0"/>
+                                <TextArea fx:id="equation_2_1" prefHeight="42.0"/>
                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Введите второе уравнение:"
                                       textAlignment="CENTER" wrappingWidth="200">
                                     <font>
                                         <Font size="14.0"/>
                                     </font>
                                 </Text>
-                                <TextArea prefHeight="42.0"/>
+                                <TextArea fx:id="equation_2_2" prefHeight="42.0"/>
                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Начало отрезка:"
                                       textAlignment="CENTER" wrappingWidth="200">
                                     <font>
                                         <Font size="14.0"/>
                                     </font>
                                 </Text>
-                                <TextField prefHeight="26.0" prefWidth="200.0"/>
+                                <TextField fx:id="a_2" prefHeight="26.0" prefWidth="200.0"/>
                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Конец отрезка:"
                                       textAlignment="CENTER" wrappingWidth="200.0">
                                     <font>
                                         <Font size="14.0"/>
                                     </font>
                                 </Text>
-                                <TextField />
+                                <TextField fx:id="b_2"/>
                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Погрешность:" textAlignment="CENTER" wrappingWidth="200.0">
                                     <font>
-                                        <Font size="14.0" />
+                                        <Font size="14.0"/>
                                     </font>
                                 </Text>
-                                <TextField />
-                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Количество разбиений:" textAlignment="CENTER" wrappingWidth="200.0">
+                                <TextField fx:id="e_2"/>
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Количество разбиений:"
+                                      textAlignment="CENTER" wrappingWidth="200.0">
                                     <font>
-                                        <Font size="14.0" />
+                                        <Font size="14.0"/>
                                     </font>
                                 </Text>
-                                <TextField />
+                                <TextField fx:id="k_2"/>
+                                <Button mnemonicParsing="false" onAction="#solve_2" prefHeight="24.0" prefWidth="236.0"
+                                        text="Вычислить" textAlignment="CENTER"/>
+                                <Button mnemonicParsing="false" onAction="#test2" prefHeight="24.0" prefWidth="236.0"
+                                        text="Тест2" textAlignment="CENTER"/>
+                                <Text fx:id="error_2" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0"
+                                      text="Ошибка ввода" textAlignment="CENTER" visible="false"
+                                      wrappingWidth="219.7294921875">
+                                    <font>
+                                        <Font size="18.0"/>
+                                    </font>
+                                </Text>
                             </children>
                         </VBox>
                     </content>

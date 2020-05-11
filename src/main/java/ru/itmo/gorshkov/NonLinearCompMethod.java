@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
-public class CompMethod {
+public class NonLinearCompMethod {
     private Expression exp;
 
-    public CompMethod(String equation) {
+    public NonLinearCompMethod(String equation) {
         exp = new Expression(equation);
         exp.addArguments(new Argument("x", 0));
     }
