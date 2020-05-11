@@ -132,7 +132,7 @@ public class MainController {
 //            stackPane.setVisible(false);
 //        }
         ObservableList<XYChart.Data<Number, Number>> data = FXCollections.observableArrayList();
-        for (double i = a; i <= b; i += (b - a) / 100) {
+        for (double i = a; i <= b; i += (b - a) / 1000) {
             exp.setArgumentValue("x", i);
             var result = exp.calculate();
             if (Double.isFinite(result))
