@@ -11,7 +11,7 @@
         <Accordion prefHeight="606.0" prefWidth="201.0" BorderPane.alignment="CENTER">
             <!--expandedPane="$titled"-->
             <panes>
-                <TitledPane fx:id="titled" animated="false" onDragDetected="#showTable1" prefHeight="580.0"
+                <TitledPane fx:id="titled" animated="false" onMouseClicked="#showTable1" prefHeight="580.0"
                             prefWidth="200.0" text="Нелинейное уравнение">
                     <content>
                         <VBox prefHeight="365.0" prefWidth="200.0" spacing="5.0">
@@ -77,7 +77,7 @@
                         </VBox>
                     </content>
                 </TitledPane>
-                <TitledPane animated="false" onDragDetected="#showTable2" text="Система нелинейных уравнений">
+                <TitledPane animated="false" onMouseClicked="#showTable2" text="Система нелинейных уравнений">
                     <content>
                         <VBox prefHeight="551.0" prefWidth="200.0" spacing="5.0">
                             <children>
@@ -95,14 +95,14 @@
                                     </font>
                                 </Text>
                                 <TextArea fx:id="equation_2_2" prefHeight="42.0"/>
-                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Начало отрезка:"
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Начальное приближение x:"
                                       textAlignment="CENTER" wrappingWidth="200">
                                     <font>
                                         <Font size="14.0"/>
                                     </font>
                                 </Text>
                                 <TextField fx:id="a_2" prefHeight="26.0" prefWidth="200.0"/>
-                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Конец отрезка:"
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Начальное приближение y:"
                                       textAlignment="CENTER" wrappingWidth="200.0">
                                     <font>
                                         <Font size="14.0"/>
@@ -116,7 +116,7 @@
                                     </font>
                                 </Text>
                                 <TextField fx:id="e_2"/>
-                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Количество разбиений:"
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Количество итераций:"
                                       textAlignment="CENTER" wrappingWidth="200.0">
                                     <font>
                                         <Font size="14.0"/>

@@ -1,22 +1,15 @@
 package ru.itmo.gorshkov;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
-import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class MainController {
@@ -81,7 +74,7 @@ public class MainController {
             var answer = method.solve(a, b, e, k, isBisection);
             var root = answer.stream().map(Pair::getKey).collect(Collectors.toList());
             table_1.setItems(FXCollections.observableList(answer));
-            drawPlotWithRoots(a, b, equation, root);
+            ChartPainter.drawPlotWithRoots(a, b, equation, root, chartBox);
         } catch (Exception e) {
             error_1.setVisible(true);
             equation_1.clear();
@@ -99,16 +92,14 @@ public class MainController {
             String equation1 = Parser.parseEquation(equation_2_1.getText());
             String equation2 = Parser.parseEquation(equation_2_2.getText());
             var method = new NewtonSystem(equation1, equation2);
-            var a = parseDouble(a_1);
-            var b = parseDouble(b_1);
-            var e = parseDouble(e_1);
-            double x = 0d;
-            double y = 0d;//!!!!!!!!!!!!!!!!
-            var answer = method.solve(x, y, e);
+            var a = parseDouble(a_2);
+            var b = parseDouble(b_2);
+            var e = parseDouble(e_2);
+            var answer = method.solve(a, b, e);
             table_2.setItems(FXCollections.observableArrayList(answer));
             var roots = new ArrayList<Pair<Double, Double>>();
             roots.add(new Pair<>(answer.getX(), answer.getY()));
-            drawPlotWithRoots(a, b, equation1, equation2, roots);
+            ChartPainter.drawPlotWithRoots(a, b, equation1, equation2, roots, chartBox);
         } catch (Exception e) {
             error_2.setVisible(true);
             equation_2_1.clear();
@@ -141,6 +132,12 @@ public class MainController {
 
     @FXML
     public void test2() {
+        equation_2_1.setText("1.6*x^2*sin(y)-y");
+        equation_2_2.setText("3.2*y*x^2+cos(x)");
+        a_2.setText("1");
+        b_2.setText("-1");
+        e_2.setText("0.001");
+        k_2.setText("3");
 
     }
 
@@ -158,87 +155,6 @@ public class MainController {
         table_1.setManaged(false);
         table_2.setVisible(true);
         table_2.setManaged(true);
-    }
-
-    private void drawPlotWithRoots(double a, double b, String equation, List<Double> roots) {
-        //        double step = (Math.ceil(b) - Math.floor(a)) / 25;
-//        NumberAxis x = new NumberAxis(Math.floor(a), Math.ceil(b), step);
-//        x.setAutoRanging(true);
-//        exp.setArgumentValue("x", a);
-//        if (!Double.isFinite(exp.calculate())) {
-//            var series = new XYChart.Series<Number, Number>();
-//            var dot = new XYChart.Data<Number, Number>(a, 0);
-//            series.getData().add(dot);
-//            chart.getData().add(series);
-//            StackPane stackPane = (StackPane) dot.getNode();
-//            stackPane.setVisible(false);
-//        }
-        var exp = new Expression(equation);
-        exp.addArguments(new Argument("x", 0));
-        NumberAxis y = new NumberAxis();
-        NumberAxis x = new NumberAxis();
-        x.setForceZeroInRange(false);
-        var chart = new LineChart<>(x, y);
-        drawPlot(a, b, exp, chart);
-        drawRoots(roots, chart, exp);
-        chartBox.getChildren().clear();
-        chartBox.getChildren().add(chart);
-    }
-
-    private void drawPlotWithRoots(double a, double b, String equation1, String equation2, List<Pair<Double, Double>> roots) {
-        var exp1 = new Expression(equation1);
-        exp1.addArguments(new Argument("x", 0));
-        exp1.addArguments(new Argument("y", 0));
-        var exp2 = new Expression(equation2);
-        exp2.addArguments(new Argument("x", 0));
-        exp1.addArguments(new Argument("y", 0));
-        NumberAxis y = new NumberAxis();
-        NumberAxis x = new NumberAxis();
-        x.setForceZeroInRange(false);
-        var chart = new LineChart<>(x, y);
-        drawPlot(a, b, exp1, chart);
-        drawPlot(a, b, exp2, chart);
-        drawRoots(roots, chart);
-        chartBox.getChildren().clear();
-        chartBox.getChildren().add(chart);
-    }
-
-    private void drawPlot(double a, double b, Expression exp, LineChart<Number, Number> chart) {
-        ObservableList<XYChart.Data<Number, Number>> data = FXCollections.observableArrayList();
-        for (double i = a; i <= b; i += (b - a) / 1000) {
-            exp.setArgumentValue("x", i);
-            var result = exp.calculate();
-            if (Double.isFinite(result))
-                data.add(new XYChart.Data<>(i, result));
-        }
-        var series = new XYChart.Series<>(data);
-        chart.getData().add(series);
-        for (var dataNode : series.getData()) {
-            StackPane stackPane = (StackPane) dataNode.getNode();
-            stackPane.setVisible(false);
-        }
-        AnchorPane.setBottomAnchor(chart, 0d);
-        AnchorPane.setLeftAnchor(chart, 0d);
-        AnchorPane.setRightAnchor(chart, 0d);
-        AnchorPane.setTopAnchor(chart, 0d);
-        chart.setLegendVisible(false);
-    }
-
-    private void drawRoots(List<Double> roots, LineChart<Number, Number> chart, Expression exp) {
-        roots.forEach(root -> {
-            exp.setArgumentValue("x", root);
-            var series = new XYChart.Series<Number, Number>();
-            series.getData().add(new XYChart.Data<>(root, exp.calculate()));
-            chart.getData().add(series);
-        });
-    }
-
-    private void drawRoots(List<Pair<Double, Double>> roots, LineChart<Number, Number> chart) {
-        roots.forEach(root -> {
-            var series = new XYChart.Series<Number, Number>();
-            series.getData().add(new XYChart.Data<>(root.getKey(), root.getValue()));
-            chart.getData().add(series);
-        });
     }
 
     private double parseDouble(TextField text) {
