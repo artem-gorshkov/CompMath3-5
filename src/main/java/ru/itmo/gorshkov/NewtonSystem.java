@@ -14,13 +14,13 @@ public class NewtonSystem {
         exp1.addArguments(new Argument("y", 0));
         exp2 = new Expression(equation2);
         exp2.addArguments(new Argument("x", 0));
-        exp1.addArguments(new Argument("y", 0));
+        exp2.addArguments(new Argument("y", 0));
     }
 
-    public Triplet<Double, Double, Integer> solve(double a, double b, double e) {
+    public Triplet<Double, Double, Integer> solve(double a, double b, double e, double k) {
         int i = 1;
         var pair = iteration(a, b);
-        while (Math.abs(pair.getKey() - a) > e && Math.abs(pair.getValue() - b) > e && i < 1000000) {
+        while (Math.abs(pair.getKey() - a) > e && Math.abs(pair.getValue() - b) > e && i <= k) {
             a = pair.getKey();
             b = pair.getValue();
             pair = iteration(a, b);
@@ -42,7 +42,7 @@ public class NewtonSystem {
         matrix[0][0] = derivative(exp1, "x", x);
         matrix[0][1] = derivative(exp1, "y", y);
         matrix[1][0] = derivative(exp2, "x", x);
-        matrix[1][1] = derivative(exp2, "x", x);
+        matrix[1][1] = derivative(exp2, "y", y);
         double jacobean = matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1];
 
         double a = x - (f1 * matrix[1][1] - f2 * matrix[0][1]) / jacobean;

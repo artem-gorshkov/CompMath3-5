@@ -62,7 +62,7 @@
                                 <RadioButton mnemonicParsing="false" text="Метод хорд" toggleGroup="$method_1"/>
                                 <Button mnemonicParsing="false" onAction="#solve_1" prefHeight="24.0" prefWidth="236.0"
                                         text="Вычислить" textAlignment="CENTER"/>
-                                <Button mnemonicParsing="false" onAction="#test1" prefHeight="24.0" prefWidth="236.0"
+                                <Button mnemonicParsing="false" onAction="#test1_1" prefHeight="24.0" prefWidth="236.0"
                                         text="Тест1" textAlignment="CENTER"/>
                                 <Button mnemonicParsing="false" onAction="#test1_2" prefHeight="24.0" prefWidth="236.0"
                                         text="Тест2" textAlignment="CENTER"/>
@@ -125,7 +125,9 @@
                                 <TextField fx:id="k_2"/>
                                 <Button mnemonicParsing="false" prefHeight="24.0" prefWidth="236.0" text="Вычислить"
                                         textAlignment="CENTER" onAction="#solve_2"/>
-                                <Button mnemonicParsing="false" onAction="#test2" prefHeight="24.0" prefWidth="236.0"
+                                <Button mnemonicParsing="false" onAction="#test2_1" prefHeight="24.0" prefWidth="236.0"
+                                        text="Тест1" textAlignment="CENTER"/>
+                                <Button mnemonicParsing="false" onAction="#test2_2" prefHeight="24.0" prefWidth="236.0"
                                         text="Тест2" textAlignment="CENTER"/>
                                 <Text fx:id="error_2" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0"
                                       text="Ошибка ввода" textAlignment="CENTER" visible="false"

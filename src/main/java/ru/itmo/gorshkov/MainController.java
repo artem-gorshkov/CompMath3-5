@@ -9,7 +9,6 @@ import javafx.scene.text.Text;
 import javafx.util.Pair;
 import org.mariuszgromada.math.mxparser.Expression;
 
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class MainController {
@@ -95,11 +94,11 @@ public class MainController {
             var a = parseDouble(a_2);
             var b = parseDouble(b_2);
             var e = parseDouble(e_2);
-            var answer = method.solve(a, b, e);
+            var k = parseDouble(k_2);
+            var answer = method.solve(a, b, e, k);
             table_2.setItems(FXCollections.observableArrayList(answer));
-            var roots = new ArrayList<Pair<Double, Double>>();
-            roots.add(new Pair<>(answer.getX(), answer.getY()));
-            ChartPainter.drawPlotWithRoots(a, b, equation1, equation2, roots, chartBox);
+            var ans = new Pair<>(answer.getX(), answer.getY());
+            ChartPainter.drawPlotsWithRoot(equation1, equation2, ans, chartBox);
         } catch (Exception e) {
             error_2.setVisible(true);
             equation_2_1.clear();
@@ -113,7 +112,7 @@ public class MainController {
     }
 
     @FXML
-    public void test1() {
+    public void test1_1() {
         equation_1.setText("sin(x)=0");
         a_1.setText("-10");
         b_1.setText("10");
@@ -124,21 +123,30 @@ public class MainController {
     @FXML
     public void test1_2() {
         equation_1.setText("ln(x-5)*sin(x)+2=0");
-        a_1.setText("15");
-        b_1.setText("17");
+        a_1.setText("4");
+        b_1.setText("50");
         e_1.setText("10^(-4)");
-        k_1.setText("1");
+        k_1.setText("100");
     }
 
     @FXML
-    public void test2() {
+    public void test2_1() {
         equation_2_1.setText("1.6*x^2*sin(y)-y=0");
         equation_2_2.setText("3.2*y*x^2+cos(x)=0");
         a_2.setText("1");
         b_2.setText("-1");
         e_2.setText("0.001");
         k_2.setText("3");
+    }
 
+    @FXML
+    public void test2_2() {
+        equation_2_1.setText("sin(y-1)+x-1.3=0");
+        equation_2_2.setText("y-sin(x+1)-0.8=0");
+        a_2.setText("0");
+        b_2.setText("1");
+        e_2.setText("0.001");
+        k_2.setText("5");
     }
 
     @FXML
