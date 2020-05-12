@@ -124,7 +124,7 @@
                                 </Text>
                                 <TextField fx:id="k_2"/>
                                 <Button mnemonicParsing="false" prefHeight="24.0" prefWidth="236.0" text="Вычислить"
-                                        textAlignment="CENTER"/>
+                                        textAlignment="CENTER" onAction="#solve_2"/>
                                 <Button mnemonicParsing="false" onAction="#test2" prefHeight="24.0" prefWidth="236.0"
                                         text="Тест2" textAlignment="CENTER"/>
                                 <Text fx:id="error_2" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0"

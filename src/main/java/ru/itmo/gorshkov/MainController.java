@@ -63,7 +63,7 @@ public class MainController {
     public void solve_1() {
         try {
             error_1.setVisible(false);
-            String equation = Parser.parseEquation(equation_1.getText());
+            String equation = parseEquation(equation_1.getText());
             RadioButton selection = (RadioButton) method_1.getSelectedToggle();
             boolean isBisection = selection.getText().equals("Метод деления пополам");
             var method = new NonLinearCompMethod(equation);
@@ -89,8 +89,8 @@ public class MainController {
     public void solve_2() {
         try {
             error_2.setVisible(false);
-            String equation1 = Parser.parseEquation(equation_2_1.getText());
-            String equation2 = Parser.parseEquation(equation_2_2.getText());
+            String equation1 = parseEquation(equation_2_1.getText());
+            String equation2 = parseEquation(equation_2_2.getText());
             var method = new NewtonSystem(equation1, equation2);
             var a = parseDouble(a_2);
             var b = parseDouble(b_2);
@@ -132,8 +132,8 @@ public class MainController {
 
     @FXML
     public void test2() {
-        equation_2_1.setText("1.6*x^2*sin(y)-y");
-        equation_2_2.setText("3.2*y*x^2+cos(x)");
+        equation_2_1.setText("1.6*x^2*sin(y)-y=0");
+        equation_2_2.setText("3.2*y*x^2+cos(x)=0");
         a_2.setText("1");
         b_2.setText("-1");
         e_2.setText("0.001");
@@ -161,5 +161,13 @@ public class MainController {
         return new Expression(text.getText()).calculate();
     }
 
+    private static String parseEquation(String str) throws IllegalArgumentException {
+        String str1 = str.substring(0, str.indexOf('='));
+        String str2 = str.substring(str.indexOf('=') + 1);
+        Expression e = new Expression(str1 + "-(" + str2 + ")");
+        if (e.checkSyntax())
+            throw new IllegalArgumentException();
+        return str1 + "-(" + str2 + ")";
+    }
 
 }
