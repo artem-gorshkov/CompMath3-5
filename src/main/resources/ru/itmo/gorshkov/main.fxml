@@ -96,14 +96,14 @@
                                 </Text>
                                 <TextArea fx:id="equation_2_2" prefHeight="42.0"/>
                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Начальное приближение x:"
-                                      textAlignment="CENTER" wrappingWidth="200">
+                                      textAlignment="CENTER" wrappingWidth="207.0">
                                     <font>
                                         <Font size="14.0"/>
                                     </font>
                                 </Text>
                                 <TextField fx:id="a_2" prefHeight="26.0" prefWidth="200.0"/>
                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Начальное приближение y:"
-                                      textAlignment="CENTER" wrappingWidth="200.0">
+                                      textAlignment="CENTER" wrappingWidth="212.0">
                                     <font>
                                         <Font size="14.0"/>
                                     </font>
@@ -123,12 +123,14 @@
                                     </font>
                                 </Text>
                                 <TextField fx:id="k_2"/>
-                                <Button mnemonicParsing="false" prefHeight="24.0" prefWidth="236.0" text="Вычислить"
-                                        textAlignment="CENTER" onAction="#solve_2"/>
+                                <Button mnemonicParsing="false" onAction="#solve_2" prefHeight="24.0" prefWidth="236.0"
+                                        text="Вычислить" textAlignment="CENTER"/>
                                 <Button mnemonicParsing="false" onAction="#test2_1" prefHeight="24.0" prefWidth="236.0"
                                         text="Тест1" textAlignment="CENTER"/>
                                 <Button mnemonicParsing="false" onAction="#test2_2" prefHeight="24.0" prefWidth="236.0"
                                         text="Тест2" textAlignment="CENTER"/>
+                                <Button mnemonicParsing="false" onAction="#test2_3" prefHeight="24.0" prefWidth="236.0"
+                                        text="Тест3" textAlignment="CENTER"/>
                                 <Text fx:id="error_2" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0"
                                       text="Ошибка ввода" textAlignment="CENTER" visible="false"
                                       wrappingWidth="219.7294921875">

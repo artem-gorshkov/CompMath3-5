@@ -150,6 +150,16 @@ public class MainController {
     }
 
     @FXML
+    public void test2_3() {
+        equation_2_1.setText("3*x^2*sin(y)^2-y^2=0");
+        equation_2_2.setText("3.5*y*x^3+x=0");
+        a_2.setText("1");
+        b_2.setText("-1");
+        e_2.setText("0.001");
+        k_2.setText("5");
+    }
+
+    @FXML
     public void showTable1() {
         table_2.setVisible(false);
         table_2.setManaged(false);
