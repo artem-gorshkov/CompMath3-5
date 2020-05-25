@@ -7,21 +7,21 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
-import javafx.util.Pair;
 import javafx.util.converter.DoubleStringConverter;
 import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.function.Function;
+import java.util.zip.DeflaterOutputStream;
 
 public class MainController {
     public static final String sin = "sin(x)";
     public static final String lnSin = "ln(x-5)*sin(x)+2";
     public static final String square = "x^2";
-
 
     public TableView<Node> table;
     public TableColumn<Node, Double> table_x;
@@ -33,6 +33,8 @@ public class MainController {
     public TextField begin;
     public TextField end;
     public TextField partition;
+
+    private Expression exp;
 
     @FXML
     private void initialize() {
@@ -59,6 +61,8 @@ public class MainController {
     }
 
     public void solve() {
+        var nodes = table.getItems();
+        nodes.sort(Comparator.comparingDouble(Node::getX));
 
     }
 
@@ -69,8 +73,8 @@ public class MainController {
             var a = parseDouble(begin);
             var b = parseDouble(end);
             var n = Integer.parseInt(partition.getText());
-            var e = getFunction();
-            var nodes = MathUtil.calcNode(a, b, n, e);
+            exp = getFunction();
+            var nodes = MathUtil.calcNode(a, b, n, exp);
             table.setItems(FXCollections.observableList(nodes));
         } catch (Exception e) {
             e.printStackTrace();
