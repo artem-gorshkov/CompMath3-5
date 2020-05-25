@@ -13,10 +13,7 @@ import javafx.util.converter.DoubleStringConverter;
 import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.function.Function;
-import java.util.zip.DeflaterOutputStream;
 
 public class MainController {
     public static final String sin = "sin(x)";
@@ -35,6 +32,8 @@ public class MainController {
     public TextField partition;
 
     private Expression exp;
+    private double a;
+    private double b;
 
     @FXML
     private void initialize() {
@@ -63,15 +62,17 @@ public class MainController {
     public void solve() {
         var nodes = table.getItems();
         nodes.sort(Comparator.comparingDouble(Node::getX));
-
+        var compMethod = new SplineInterpolation(nodes, exp);
+        var s = compMethod.calcSpline();
+        ChartPainter.drawChart(a, b, nodes, exp, s, chartBox);
     }
 
     @FXML
     public void feelNodes() {
         try {
             error.setVisible(false);
-            var a = parseDouble(begin);
-            var b = parseDouble(end);
+            a = parseDouble(begin);
+            b = parseDouble(end);
             var n = Integer.parseInt(partition.getText());
             exp = getFunction();
             var nodes = MathUtil.calcNode(a, b, n, exp);

@@ -76,7 +76,7 @@ public class SplineInterpolation {
         }
         //return stroke
         s[n] = beta[n];
-        for (int i = n - 1; i >=0; i++) {
+        for (int i = n - 1; i >=0; i--) {
             s[i] = alpha[i]*s[i+1] + beta[i];
         }
     }
