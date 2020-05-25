@@ -2,12 +2,16 @@ package ru.itmo.gorshkov;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
+import javafx.util.converter.DoubleStringConverter;
 import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 
@@ -17,7 +21,6 @@ public class MainController {
     public static final String sin = "sin(x)";
     public static final String lnSin = "ln(x-5)*sin(x)+2";
     public static final String square = "x^2";
-
 
 
     public TableView<Node> table;
@@ -33,9 +36,20 @@ public class MainController {
 
     @FXML
     private void initialize() {
-
+        table.setEditable(true);
         table_x.setCellValueFactory(new PropertyValueFactory<>("x"));
+        table_x.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
         table_y.setCellValueFactory(new PropertyValueFactory<>("y"));
+        table_y.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+        EventHandler<TableColumn.CellEditEvent<Node, Double>> callback = nodeDoubleCellEditEvent -> {
+            TablePosition<Node, Double> pos = nodeDoubleCellEditEvent.getTablePosition();
+            Double newX = nodeDoubleCellEditEvent.getNewValue();
+            int row = pos.getRow();
+            Node node = nodeDoubleCellEditEvent.getTableView().getItems().get(row);
+            node.setX(newX);
+        };
+        table_x.setOnEditCommit(callback);
+        table_y.setOnEditCommit(callback);
         table.setPlaceholder(new Label(""));
         table_x.maxWidthProperty().bind(table.widthProperty().multiply(.50));
         table_x.minWidthProperty().bind(table_x.maxWidthProperty());
@@ -47,7 +61,8 @@ public class MainController {
     public void solve() {
 
     }
-@FXML
+
+    @FXML
     public void feelNodes() {
         try {
             error.setVisible(false);
@@ -71,9 +86,10 @@ public class MainController {
             throw new IllegalArgumentException();
         String func = comboBox.getValue();
         var e = new Expression(func);
-        e.addArguments(new Argument("x",0));
+        e.addArguments(new Argument("x", 0));
         return e;
     }
+
     private double parseDouble(TextField text) {
         return new Expression(text.getText()).calculate();
     }
