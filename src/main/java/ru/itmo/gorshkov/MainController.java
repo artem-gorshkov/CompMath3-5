@@ -30,6 +30,9 @@ public class MainController {
     public TextField begin;
     public TextField end;
     public TextField partition;
+    public Text error_nodes;
+    public TextField equation;
+    public TextField add_x;
 
     private Expression exp;
     private double a;
@@ -42,29 +45,54 @@ public class MainController {
         table_x.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
         table_y.setCellValueFactory(new PropertyValueFactory<>("y"));
         table_y.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-        EventHandler<TableColumn.CellEditEvent<Node, Double>> callback = nodeDoubleCellEditEvent -> {
+        table_x.setOnEditCommit(nodeDoubleCellEditEvent -> {
             TablePosition<Node, Double> pos = nodeDoubleCellEditEvent.getTablePosition();
             Double newX = nodeDoubleCellEditEvent.getNewValue();
             int row = pos.getRow();
             Node node = nodeDoubleCellEditEvent.getTableView().getItems().get(row);
             node.setX(newX);
-        };
-        table_x.setOnEditCommit(callback);
-        table_y.setOnEditCommit(callback);
+            var e = getFunction();
+            e.setArgumentValue("x", newX);
+            var y = e.calculate();
+            node.setY(y);
+            table.refresh();
+        });
+        table_y.setOnEditCommit(nodeDoubleCellEditEvent -> {
+            TablePosition<Node, Double> pos = nodeDoubleCellEditEvent.getTablePosition();
+            Double newY = nodeDoubleCellEditEvent.getNewValue();
+            int row = pos.getRow();
+            Node node = nodeDoubleCellEditEvent.getTableView().getItems().get(row);
+            node.setY(newY);
+        });
         table.setPlaceholder(new Label(""));
         table_x.maxWidthProperty().bind(table.widthProperty().multiply(.50));
         table_x.minWidthProperty().bind(table_x.maxWidthProperty());
 
-        ObservableList<String> func = FXCollections.observableArrayList(sin, lnSin, square);
+        ObservableList<String> func = FXCollections.observableArrayList("", sin, lnSin, square);
         comboBox.setItems(func);
+        comboBox.setOnAction(actionEvent -> {
+            table.getItems().removeAll(table.getItems());
+            if(comboBox.getValue().equals("")) {
+                equation.setDisable(false);
+            }
+            else {
+                equation.setText("");
+                equation.setDisable(true);
+            }
+        });
     }
 
     public void solve() {
+        error_nodes.setVisible(false);
         var nodes = table.getItems();
-        nodes.sort(Comparator.comparingDouble(Node::getX));
-        var compMethod = new SplineInterpolation(nodes, exp);
-        var s = compMethod.calcSpline();
-        ChartPainter.drawChart(a, b, nodes, exp, s, chartBox);
+        if (nodes.isEmpty())
+            error_nodes.setVisible(true);
+        else {
+            nodes.sort(Comparator.comparingDouble(Node::getX));
+            var compMethod = new SplineInterpolation(nodes, exp);
+            var s = compMethod.calcSpline();
+            ChartPainter.drawChart(nodes.get(0).getX(), nodes.get(nodes.size() - 1).getX(), nodes, exp, s, chartBox);
+        }
     }
 
     @FXML
@@ -78,7 +106,6 @@ public class MainController {
             var nodes = MathUtil.calcNode(a, b, n, exp);
             table.setItems(FXCollections.observableList(nodes));
         } catch (Exception e) {
-            e.printStackTrace();
             error.setVisible(true);
             begin.clear();
             end.clear();
@@ -86,13 +113,35 @@ public class MainController {
         }
     }
 
+    @FXML
+    public void addNode() {
+        try {
+            error.setVisible(false);
+            double x = parseDouble(add_x);
+            exp = getFunction();
+            exp.setArgumentValue("x", x);
+            double y = exp.calculate();
+            table.getItems().add(new Node(x,y));
+            table.refresh();
+            add_x.clear();
+        } catch (Exception e) {
+            error.setVisible(true);
+            add_x.clear();
+        }
+    }
+
     public Expression getFunction() {
-        if (comboBox.getValue() == null)
-            throw new IllegalArgumentException();
-        String func = comboBox.getValue();
+        String func;
+        if (comboBox.getValue() == null || comboBox.getValue().equals("")) {
+            func = equation.getText();
+        } else {
+            func = comboBox.getValue();
+        }
         var e = new Expression(func);
         e.addArguments(new Argument("x", 0));
-        return e;
+        if (e.checkSyntax())
+            return e;
+        else throw new IllegalArgumentException();
     }
 
     private double parseDouble(TextField text) {
