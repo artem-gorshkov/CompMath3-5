@@ -10,7 +10,7 @@
     <left>
         <TitledPane animated="false" prefHeight="1.0E7" text="Сплайны" textAlignment="CENTER" BorderPane.alignment="CENTER">
             <content>
-                <VBox alignment="TOP_CENTER" spacing="10.0">
+                <VBox alignment="TOP_CENTER" spacing="5.0">
                     <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Введите функцию:" />
                   <TextField fx:id="equation" />
@@ -30,15 +30,27 @@
                      <font>
                         <Font size="16.0" />
                      </font></Button>
+                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#test2" text="тест2">
+                            <font>
+                                <Font size="16.0" />
+                            </font></Button>
                         <Button mnemonicParsing="false" onAction="#solve" text="Интерполировать" textAlignment="CENTER">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
                      <VBox.margin>
-                        <Insets top="15.0" />
+                        <Insets top="10.0" />
                      </VBox.margin></Button>
                         <Text fx:id="error" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Ошибка ввода" textAlignment="CENTER" visible="false" wrappingWidth="219.7294921875" />
                         <Text fx:id="error_nodes" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="В начале введите узлы" textAlignment="CENTER" visible="false" wrappingWidth="219.7294921875" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Найти значение в точке">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                  </Text>
+                  <TextField prefHeight="26.0" prefWidth="125.0" fx:id="find_y_field"/>
+                  <Button fx:id="find_y_button" mnemonicParsing="false" text="найти" onAction="#findY"/>
+                  <Text visible="false" fx:id="find_y" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
                     </children>
                 </VBox>
             </content>
@@ -76,7 +88,7 @@
                </font>
             </Text>
             <TextField fx:id="add_x" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
-            <Button onAction="#addNode" mnemonicParsing="false" text="добавить точку" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+            <Button mnemonicParsing="false" onAction="#addNode" text="добавить точку" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
          </children>
       </AnchorPane>
    </right>

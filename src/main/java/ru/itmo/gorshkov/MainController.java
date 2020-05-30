@@ -14,6 +14,7 @@ import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 
 import java.util.Comparator;
+import java.util.function.Function;
 
 public class MainController {
     public static final String sin = "sin(x)";
@@ -33,13 +34,19 @@ public class MainController {
     public Text error_nodes;
     public TextField equation;
     public TextField add_x;
+    public Text find_y;
+    public TextField find_y_field;
+    public Button find_y_button;
 
     private Expression exp;
     private double a;
     private double b;
+    private double[] s;
 
     @FXML
     private void initialize() {
+        find_y_field.setDisable(true);
+        find_y_button.setDisable(true);
         table.setEditable(true);
         table_x.setCellValueFactory(new PropertyValueFactory<>("x"));
         table_x.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
@@ -72,10 +79,9 @@ public class MainController {
         comboBox.setItems(func);
         comboBox.setOnAction(actionEvent -> {
             table.getItems().removeAll(table.getItems());
-            if(comboBox.getValue().equals("")) {
+            if (comboBox.getValue().equals("")) {
                 equation.setDisable(false);
-            }
-            else {
+            } else {
                 equation.setText("");
                 equation.setDisable(true);
             }
@@ -90,13 +96,18 @@ public class MainController {
         else {
             nodes.sort(Comparator.comparingDouble(Node::getX));
             var compMethod = new SplineInterpolation(nodes, exp);
-            var s = compMethod.calcSpline();
+            s = compMethod.calcSpline();
             ChartPainter.drawChart(nodes.get(0).getX(), nodes.get(nodes.size() - 1).getX(), nodes, exp, s, chartBox);
         }
+        find_y_field.setDisable(false);
+        find_y_button.setDisable(false);
     }
 
     @FXML
     public void feelNodes() {
+        find_y_field.setDisable(true);
+        find_y_button.setDisable(true);
+        find_y.setVisible(false);
         try {
             error.setVisible(false);
             a = parseDouble(begin);
@@ -121,12 +132,41 @@ public class MainController {
             exp = getFunction();
             exp.setArgumentValue("x", x);
             double y = exp.calculate();
-            table.getItems().add(new Node(x,y));
+            table.getItems().add(new Node(x, y));
             table.refresh();
             add_x.clear();
         } catch (Exception e) {
             error.setVisible(true);
             add_x.clear();
+        }
+    }
+
+    @FXML
+    public void findY() {
+        var nodes = table.getItems();
+        var X = Double.parseDouble(find_y_field.getText());
+        int n = nodes.size() - 1;
+        for (int i = 1; i <= n; i += 1) {
+            int finalI = i;
+            double y = Double.NaN;
+            if (X >= nodes.get(i - 1).getX() && X <= nodes.get(i).getX()) {
+                Function<Double, Double> func = x -> {
+                    double x0 = nodes.get(finalI - 1).getX();
+                    double y0 = nodes.get(finalI - 1).getY();
+                    double x1 = nodes.get(finalI).getX();
+                    double y1 = nodes.get(finalI).getY();
+                    double h = x1 - x0;
+                    return y0 * Math.pow(x - x1, 2) * (2 * (x - x0) + h) / Math.pow(h, 3) +
+                            s[finalI - 1] * Math.pow(x - x1, 2) * (x - x0) / Math.pow(h, 2) +
+                            y1 * Math.pow(x - x0, 2) * (2 * (x1 - x) + h) / Math.pow(h, 3) +
+                            s[finalI] * Math.pow(x - x0, 2) * (x - x1) / Math.pow(h, 2);
+                };
+                y = func.apply(X);
+            }
+            if (Double.isFinite(y)) {
+                find_y.setText(Double.toString(y));
+                find_y.setVisible(true);
+            }
         }
     }
 
@@ -145,7 +185,7 @@ public class MainController {
     }
 
     private double parseDouble(TextField text) {
-        return new Expression(text.getText()).calculate();
+        return Double.parseDouble(text.getText());
     }
 
     @FXML
@@ -156,4 +196,11 @@ public class MainController {
         comboBox.setValue(sin);
     }
 
+    @FXML
+    public void test2() {
+        begin.setText("-10");
+        end.setText("10");
+        partition.setText("50");
+        equation.setText("sin(x)*x^3-cos(x)");
+    }
 }
