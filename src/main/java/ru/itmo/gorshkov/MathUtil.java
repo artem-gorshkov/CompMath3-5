@@ -1,7 +1,6 @@
 package ru.itmo.gorshkov;
 
 
-import javafx.util.Pair;
 import org.mariuszgromada.math.mxparser.Expression;
 
 import java.util.ArrayList;
