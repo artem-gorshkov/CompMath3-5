@@ -75,18 +75,18 @@ public class MainController {
     @FXML
     public void test2() {
         equation.setText("(x-y)^2+1");
-        x0.setText("0");
-        y0.setText("0.667");
-        end.setText("1.4");
-        e.setText("0.1");
+        x0.setText("-10");
+        y0.setText("-9.9");
+        end.setText("-0.1");
+        e.setText("0.3");
     }
 
     @FXML
     public void test3() {
-        equation.setText("x^2*y^(1/3)");
-        x0.setText("2");
-        y0.setText("0");
-        end.setText("4");
+        equation.setText("x^2*y+2*x*y");
+        x0.setText("-3");
+        y0.setText("1");
+        end.setText("1.2");
         e.setText("0.1");
     }
 }

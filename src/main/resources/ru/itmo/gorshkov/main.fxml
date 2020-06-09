@@ -19,17 +19,12 @@
                         </Text>
                         <HBox alignment="CENTER" prefHeight="51.0" prefWidth="220.0">
                             <children>
-                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="y'+" wrappingWidth="23.8642578125">
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="y'=" wrappingWidth="23.8642578125">
                                     <font>
                                         <Font name="System Italic" size="14.0" />
                                     </font>
                                 </Text>
                                 <TextField fx:id="equation" prefHeight="14.0" prefWidth="171.0" />
-                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="= 0" wrappingWidth="25.087890625">
-                                    <font>
-                                        <Font name="System Italic" size="14.0" />
-                                    </font>
-                                </Text>
                             </children>
                         </HBox>
                         <TilePane prefHeight="142.0" prefWidth="220.0" vgap="5.0">
