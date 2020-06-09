@@ -12,13 +12,12 @@ import javafx.util.converter.DoubleStringConverter;
 import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 public class MainController {
-    public static final String sin = "sin(x)";
-    public static final String lnSin = "ln(x-5)*sin(x)+2";
-    public static final String square = "x^2";
 
     public TableView<Node> table;
     public TableColumn<Node, Double> table_x;
@@ -26,161 +25,38 @@ public class MainController {
 
     public Text error;
     public AnchorPane chartBox;
-    public ComboBox<String> comboBox;
-    public TextField begin;
-    public TextField end;
-    public TextField partition;
-    public Text error_nodes;
     public TextField equation;
-    public TextField add_x;
-    public Text find_y;
-    public TextField find_y_field;
-    public Button find_y_button;
-
-    private Expression exp;
-    private double a;
-    private double b;
-    private double[] s;
+    public TextField x0;
+    public TextField y0;
+    public TextField end;
+    public TextField e;
 
     @FXML
     private void initialize() {
-        find_y_field.setDisable(true);
-        find_y_button.setDisable(true);
         table.setEditable(true);
         table_x.setCellValueFactory(new PropertyValueFactory<>("x"));
         table_x.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
         table_y.setCellValueFactory(new PropertyValueFactory<>("y"));
         table_y.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-        table_x.setOnEditCommit(nodeDoubleCellEditEvent -> {
-            TablePosition<Node, Double> pos = nodeDoubleCellEditEvent.getTablePosition();
-            Double newX = nodeDoubleCellEditEvent.getNewValue();
-            int row = pos.getRow();
-            Node node = nodeDoubleCellEditEvent.getTableView().getItems().get(row);
-            node.setX(newX);
-            var e = getFunction();
-            e.setArgumentValue("x", newX);
-            var y = e.calculate();
-            node.setY(y);
-            table.refresh();
-        });
-        table_y.setOnEditCommit(nodeDoubleCellEditEvent -> {
-            TablePosition<Node, Double> pos = nodeDoubleCellEditEvent.getTablePosition();
-            Double newY = nodeDoubleCellEditEvent.getNewValue();
-            int row = pos.getRow();
-            Node node = nodeDoubleCellEditEvent.getTableView().getItems().get(row);
-            node.setY(newY);
-        });
         table.setPlaceholder(new Label(""));
         table_x.maxWidthProperty().bind(table.widthProperty().multiply(.50));
         table_x.minWidthProperty().bind(table_x.maxWidthProperty());
-
-        ObservableList<String> func = FXCollections.observableArrayList("", sin, lnSin, square);
-        comboBox.setItems(func);
-        comboBox.setOnAction(actionEvent -> {
-            table.getItems().removeAll(table.getItems());
-            if (comboBox.getValue().equals("")) {
-                equation.setDisable(false);
-            } else {
-                equation.setText("");
-                equation.setDisable(true);
-            }
-        });
     }
 
     public void solve() {
-        error_nodes.setVisible(false);
-        var nodes = table.getItems();
-        if (nodes.isEmpty())
-            error_nodes.setVisible(true);
+        error.setVisible(false);
+        if (x0.getText().equals("") || y0.getText().equals("") || equation.getText().equals("") || end.getText().equals("") || e.getText().equals(""))
+            error.setVisible(true);
         else {
-            nodes.sort(Comparator.comparingDouble(Node::getX));
-            var compMethod = new SplineInterpolation(nodes, exp);
-            s = compMethod.calcSpline();
-            ChartPainter.drawChart(nodes.get(0).getX(), nodes.get(nodes.size() - 1).getX(), nodes, exp, s, chartBox);
-        }
-        find_y_field.setDisable(false);
-        find_y_button.setDisable(false);
-    }
-
-    @FXML
-    public void feelNodes() {
-        find_y_field.setDisable(true);
-        find_y_button.setDisable(true);
-        find_y.setVisible(false);
-        try {
-            error.setVisible(false);
-            a = parseDouble(begin);
-            b = parseDouble(end);
-            var n = Integer.parseInt(partition.getText());
-            exp = getFunction();
-            var nodes = MathUtil.calcNode(a, b, n, exp);
+            var exp = new Expression(equation.getText());
+            exp.addArguments(new Argument("x", 0), new Argument("y", 0));
+            var eulerMethod = new ImprovedEulerMethod(parseDouble(x0), parseDouble(y0), parseDouble(end), parseDouble(e), exp);
+            var nodes = eulerMethod.solve();
             table.setItems(FXCollections.observableList(nodes));
-        } catch (Exception e) {
-            error.setVisible(true);
-            begin.clear();
-            end.clear();
-            partition.clear();
+            var splineMethod = new SplineInterpolation(nodes);
+            var s = splineMethod.calcSpline();
+            ChartPainter.drawChart(nodes, s, chartBox);
         }
-    }
-
-    @FXML
-    public void addNode() {
-        try {
-            error.setVisible(false);
-            double x = parseDouble(add_x);
-            exp = getFunction();
-            exp.setArgumentValue("x", x);
-            double y = exp.calculate();
-            table.getItems().add(new Node(x, y));
-            table.refresh();
-            add_x.clear();
-        } catch (Exception e) {
-            error.setVisible(true);
-            add_x.clear();
-        }
-    }
-
-    @FXML
-    public void findY() {
-        var nodes = table.getItems();
-        var X = Double.parseDouble(find_y_field.getText());
-        int n = nodes.size() - 1;
-        for (int i = 1; i <= n; i += 1) {
-            int finalI = i;
-            double y = Double.NaN;
-            if (X >= nodes.get(i - 1).getX() && X <= nodes.get(i).getX()) {
-                Function<Double, Double> func = x -> {
-                    double x0 = nodes.get(finalI - 1).getX();
-                    double y0 = nodes.get(finalI - 1).getY();
-                    double x1 = nodes.get(finalI).getX();
-                    double y1 = nodes.get(finalI).getY();
-                    double h = x1 - x0;
-                    return y0 * Math.pow(x - x1, 2) * (2 * (x - x0) + h) / Math.pow(h, 3) +
-                            s[finalI - 1] * Math.pow(x - x1, 2) * (x - x0) / Math.pow(h, 2) +
-                            y1 * Math.pow(x - x0, 2) * (2 * (x1 - x) + h) / Math.pow(h, 3) +
-                            s[finalI] * Math.pow(x - x0, 2) * (x - x1) / Math.pow(h, 2);
-                };
-                y = func.apply(X);
-            }
-            if (Double.isFinite(y)) {
-                find_y.setText(Double.toString(y));
-                find_y.setVisible(true);
-            }
-        }
-    }
-
-    public Expression getFunction() {
-        String func;
-        if (comboBox.getValue() == null || comboBox.getValue().equals("")) {
-            func = equation.getText();
-        } else {
-            func = comboBox.getValue();
-        }
-        var e = new Expression(func);
-        e.addArguments(new Argument("x", 0));
-        if (e.checkSyntax())
-            return e;
-        else throw new IllegalArgumentException();
     }
 
     private double parseDouble(TextField text) {
@@ -189,17 +65,28 @@ public class MainController {
 
     @FXML
     public void test1() {
-        begin.setText("10");
-        end.setText("20");
-        partition.setText("10");
-        comboBox.setValue(sin);
+        equation.setText("y+(1+x)*y^2");
+        x0.setText("1");
+        y0.setText("-1");
+        end.setText("1.5");
+        e.setText("0.1");
     }
 
     @FXML
     public void test2() {
-        begin.setText("-10");
-        end.setText("10");
-        partition.setText("50");
-        equation.setText("sin(x)*x^3-cos(x)");
+        equation.setText("(x-y)^2+1");
+        x0.setText("0");
+        y0.setText("0.667");
+        end.setText("1.4");
+        e.setText("0.1");
+    }
+
+    @FXML
+    public void test3() {
+        equation.setText("x^2*y^(1/3)");
+        x0.setText("2");
+        y0.setText("0");
+        end.setText("4");
+        e.setText("0.1");
     }
 }
