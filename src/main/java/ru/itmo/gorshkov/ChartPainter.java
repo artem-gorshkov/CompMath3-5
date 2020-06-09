@@ -14,13 +14,12 @@ import java.util.function.Function;
 
 public class ChartPainter {
 
-    public static void drawChart(double a, double b, List<Node> nodes, Expression exp, double[] s, AnchorPane chartBox) {
+    public static void drawChart(List<Node> nodes, double[] s, AnchorPane chartBox) {
         NumberAxis y = new NumberAxis();
         NumberAxis x = new NumberAxis();
         x.setForceZeroInRange(false);
         var chart = new LineChart<>(x, y);
 
-        drawPlot(a, b, exp, chart);
         drawNodes(nodes, chart);
         drawSpline(s, nodes, chart);
 
