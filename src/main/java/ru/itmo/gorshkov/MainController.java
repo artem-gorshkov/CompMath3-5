@@ -89,4 +89,22 @@ public class MainController {
         end.setText("1.2");
         e.setText("0.1");
     }
+
+    @FXML
+    public void test4() {
+        equation.setText("y^2*x+4*x+y^2+4");
+        x0.setText("-2");
+        y0.setText("0");
+        end.setText("-0.1");
+        e.setText("0.1");
+    }
+
+    @FXML
+    public void test5() {
+        equation.setText("cos(e^(2*x))^2-2*y");
+        x0.setText("0.5");
+        y0.setText("0.5");
+        end.setText("2.5");
+        e.setText("0.3");
+    }
 }
